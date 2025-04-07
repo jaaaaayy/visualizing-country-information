@@ -1,3 +1,4 @@
+import Countries from "@/components/countries";
 import RegionDropdownMenuItem from "@/components/region-dropdown-menu-item";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,12 +7,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Country, ErrorResponse } from "@/types";
 import { Filter, Loader2, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import Footer from "../components/footer";
 import Header from "../components/header";
-import { Country, ErrorResponse } from "@/types";
-import CountryCard from "@/components/country-card";
 
 const regions = [
   "Africa",
@@ -119,7 +119,7 @@ function Home() {
         ) : (
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredCountries.map((country, index) => (
-              <CountryCard key={index} country={country} />
+              <Countries key={index} country={country} />
             ))}
           </div>
         )}
