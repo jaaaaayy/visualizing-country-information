@@ -1,49 +1,58 @@
+import RegionDropdownMenuItem from "@/components/region-dropdown-menu-item";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Filter } from "lucide-react";
+import { Filter, Loader2, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import CountryDetails from "../components/country-details";
 import Footer from "../components/footer";
 import Header from "../components/header";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Country, ErrorResponse } from "@/types";
+import CountryCard from "@/components/country-card";
 
-type Error = {
-  message: string;
-  details: string;
-};
+const regions = [
+  "Africa",
+  "Asia",
+  "Europe",
+  "North America",
+  "South America",
+  "Oceana",
+  "Antartica",
+];
 
 function Home() {
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
-  const [country, setCountry] = useState(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [error, setError] = useState<ErrorResponse | null>(null);
 
   async function fetchCountry() {
-    const response = await fetch(
-      "https://countries-api-abhishek.vercel.app/countries/Afghanistan"
-    );
+    try {
+      const response = await fetch(
+        "https://countries-api-abhishek.vercel.app/countries"
+      );
 
-    const { data } = await response.json();
+      const { data } = await response.json();
 
-    if (!response.ok) {
-      setError(data);
+      if (!response.ok) {
+        setError(data);
+      }
+
+      setCountries(data);
+    } catch (error) {
+      console.log("Something went wrong!", error);
+    } finally {
+      setLoading(false);
     }
-
-    setCountry(data);
   }
 
   useEffect(() => {
     fetchCountry();
   }, []);
-
-  useEffect(() => {
-    console.log(selectedRegions);
-  }, [selectedRegions]);
 
   const handleRegionChange = (region: string, checked: boolean) => {
     if (checked) {
@@ -53,102 +62,66 @@ function Home() {
     }
   };
 
+  const filteredCountries = countries.filter((country) => {
+    if (selectedRegions.length && !selectedRegions.includes(country.region)) {
+      return false;
+    }
+
+    return country.name.toLowerCase().includes(searchTerm.trim().toLowerCase());
+  });
+
   return (
-    <div className="max-w-[1440px] mx-auto">
+    <div className="max-w-[1440px] mx-auto h-screen flex flex-col">
       <Header />
-      <main className="p-4 lg:p-6 space-y-6 container mx-auto">
+      <main className="p-4 lg:p-6 space-y-6 container mx-auto flex-1 flex flex-col">
         <div className="flex justify-end gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant={"outline"}>
-                <Filter /> Region
+                <Filter className="text-muted-foreground" /> Region
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                <Checkbox
-                  id="africa"
-                  checked={selectedRegions.includes("Africa")}
+              {regions.map((region) => (
+                <RegionDropdownMenuItem
+                  key={region}
+                  checked={selectedRegions.includes(region)}
                   onCheckedChange={(checked: boolean) =>
-                    handleRegionChange("Africa", checked)
+                    handleRegionChange(region, checked)
                   }
+                  label={region}
                 />
-                <label htmlFor="africa">Africa</label>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                <Checkbox
-                  id="asia"
-                  checked={selectedRegions.includes("Asia")}
-                  onCheckedChange={(checked: boolean) =>
-                    handleRegionChange("Asia", checked)
-                  }
-                />
-                <label htmlFor="asia">Asia</label>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                <Checkbox
-                  id="europe"
-                  checked={selectedRegions.includes("Europe")}
-                  onCheckedChange={(checked: boolean) =>
-                    handleRegionChange("Europe", checked)
-                  }
-                />
-                <label htmlFor="europe">Europe</label>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                <Checkbox
-                  id="northAmerica"
-                  checked={selectedRegions.includes("North America")}
-                  onCheckedChange={(checked: boolean) =>
-                    handleRegionChange("North America", checked)
-                  }
-                />
-                <label htmlFor="northAmerica">North America</label>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                <Checkbox
-                  id="southAmerica"
-                  checked={selectedRegions.includes("South America")}
-                  onCheckedChange={(checked: boolean) =>
-                    handleRegionChange("South America", checked)
-                  }
-                />
-                <label htmlFor="southAmerica">South America</label>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                <Checkbox
-                  id="oceana"
-                  checked={selectedRegions.includes("Oceana")}
-                  onCheckedChange={(checked: boolean) =>
-                    handleRegionChange("Oceana", checked)
-                  }
-                />
-                <label htmlFor="oceana">Oceana</label>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                <Checkbox
-                  id="antartica"
-                  checked={selectedRegions.includes("Antartica")}
-                  onCheckedChange={(checked: boolean) =>
-                    handleRegionChange("Antartica", checked)
-                  }
-                />
-                <label htmlFor="antartica">Antartica</label>
-              </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <div className="flex gap-2">
-            <Input placeholder="Search country" className="w-xs" />
-            <Button>Search</Button>
+          <div className="relative">
+            <Search className="size-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search country..."
+              className="md:w-xs pl-8"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </div>
         {error ? (
-          <div>
+          <div className="flex items-center justify-center flex-1">
             <p>{error.message}</p>
             <p>{error.details}</p>
           </div>
+        ) : loading ? (
+          <div className="flex flex-col gap-2 items-center justify-center flex-1">
+            <span className="animate-spin">
+              <Loader2 />
+            </span>
+            <p>Loading countries...</p>
+          </div>
         ) : (
-          <CountryDetails country={country} />
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredCountries.map((country, index) => (
+              <CountryCard key={index} country={country} />
+            ))}
+          </div>
         )}
       </main>
       <Footer />
