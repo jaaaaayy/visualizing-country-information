@@ -1,16 +1,16 @@
 function Footer() {
   return (
-    <footer>
+    <footer className="flex flex-col items-center justify-center border-t border-gray-200 p-4 lg:px-6">
       <p>&copy; {new Date().getFullYear()} Visualizing Country Information</p>
       <p>
-        Data powered by{" "}
+        Powered by{" "}
         <a
           href="https://nationnode.vercel.app/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-500 hover:underline"
+          className="text-blue-500 hover:underline underline-offset-4"
         >
-          NationNode API
+          NationNode
         </a>
       </p>
     </footer>
