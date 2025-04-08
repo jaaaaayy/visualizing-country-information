@@ -1,4 +1,4 @@
-function Footer() {
+const Footer = () => {
   return (
     <footer className="flex flex-col items-center justify-center border-t border-gray-200 p-4 lg:px-6">
       <p>&copy; {new Date().getFullYear()} Visualizing Country Information</p>
@@ -15,6 +15,6 @@ function Footer() {
       </p>
     </footer>
   );
-}
+};
 
 export default Footer;

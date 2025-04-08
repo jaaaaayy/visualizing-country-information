@@ -2,12 +2,12 @@ import { Country } from "@/types";
 import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
 
-function Borders({ country }: { country: Country | null }) {
+const Borders = ({ country }: { country: Country | null }) => {
   return (
     <div className="space-y-2">
       <Label>Borders</Label>
       <div className="flex flex-wrap gap-2">
-        {country?.borders.map((border) => (
+        {country?.borders?.map((border) => (
           <Badge key={border} variant={"outline"}>
             {border}
           </Badge>
@@ -15,6 +15,6 @@ function Borders({ country }: { country: Country | null }) {
       </div>
     </div>
   );
-}
+};
 
 export default Borders;

@@ -1,6 +1,6 @@
 import { Country } from "@/types";
 
-function Flag({ country }: { country: Country | null }) {
+const Flag = ({ country }: { country: Country | null }) => {
   return (
     <img
       src={country?.flag}
@@ -9,6 +9,6 @@ function Flag({ country }: { country: Country | null }) {
       className="mb-6 rounded-md"
     />
   );
-}
+};
 
 export default Flag;

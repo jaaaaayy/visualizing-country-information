@@ -1,8 +1,3 @@
-export type ErrorResponse = {
-  message: string;
-  details: string;
-};
-
 export type Country = {
   name: string;
   capital: string;

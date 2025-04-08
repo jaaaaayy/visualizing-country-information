@@ -1,7 +1,7 @@
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "./ui/checkbox";
 
-function RegionDropdownMenuItem({
+const RegionDropdownMenuItem = ({
   checked,
   onCheckedChange,
   label,
@@ -9,7 +9,7 @@ function RegionDropdownMenuItem({
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   label: string;
-}) {
+}) => {
   return (
     <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
       <Checkbox checked={checked} onCheckedChange={onCheckedChange} />
