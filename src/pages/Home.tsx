@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Country } from "@/types";
 import { Filter, Loader2, Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Footer from "../components/footer";
 import Header from "../components/header";
 
@@ -27,8 +27,10 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
-  const [country, setCountry] = useState<Country | null>(null);
+  const [country, setCountry] = useState<Country | null>();
   const [error, setError] = useState("");
+  const [isSearch, isSetSearch] = useState(false);
+  const ignoreRef = useRef(false);
 
   async function fetchCountry(country: string) {
     try {
@@ -44,16 +46,19 @@ const Home = () => {
       if (!response.ok) {
         setError(result.details);
       }
-      if (
-        selectedRegions.length &&
-        !selectedRegions.includes(result.data.region)
-      ) {
-        setCountry(null);
-        setError(`Country ${searchTerm} not found.`);
 
-        return;
+      if (!ignoreRef.current) {
+        if (
+          selectedRegions.length &&
+          !selectedRegions.includes(result.data.region)
+        ) {
+          setError(`Country "${country}" not found.`);
+
+          return;
+        }
       }
 
+      localStorage.setItem("country", JSON.stringify(result.data));
       setCountry(result.data);
     } catch (error) {
       console.log("Something went wrong!", error);
@@ -63,7 +68,19 @@ const Home = () => {
   }
 
   useEffect(() => {
-    fetchCountry(searchTerm ? searchTerm : "Afghanistan");
+    ignoreRef.current = false;
+
+    fetchCountry(
+      searchTerm && isSearch
+        ? searchTerm
+        : country
+        ? country.name
+        : "Afghanistan"
+    );
+
+    return () => {
+      ignoreRef.current = true;
+    };
   }, [selectedRegions]);
 
   const handleRegionChange = (region: string, checked: boolean) => {
@@ -72,10 +89,13 @@ const Home = () => {
     } else {
       setSelectedRegions((prev) => prev.filter((r) => r !== region));
     }
+
+    isSetSearch(false);
   };
 
   const handleSearch = () => {
     fetchCountry(searchTerm ? searchTerm : "Afghanistan");
+    isSetSearch(true);
   };
 
   const handleClose = () => {
@@ -108,7 +128,7 @@ const Home = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="flex gap-2">
-            <div className="relative border">
+            <div className="relative">
               <Input
                 placeholder="Search country..."
                 className="md:w-xs pr-8"
@@ -140,7 +160,7 @@ const Home = () => {
             <p>Loading country...</p>
           </div>
         ) : country ? (
-          <CountryDetails country={country} />
+          <CountryDetails country={country} fetchCountry={fetchCountry} />
         ) : null}
       </main>
       <Footer />

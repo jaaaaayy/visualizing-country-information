@@ -1,19 +1,34 @@
 import { Country } from "@/types";
-import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
+import { Label } from "./ui/label";
 
-const Borders = ({ country }: { country: Country | null }) => {
+const Borders = ({
+  country,
+  fetchCountry,
+}: {
+  country: Country | null;
+  fetchCountry(country: string): Promise<void>;
+}) => {
   return (
-    <div className="space-y-2">
-      <Label>Borders</Label>
-      <div className="flex flex-wrap gap-2">
-        {country?.borders?.map((border) => (
-          <Badge key={border} variant={"outline"}>
-            {border}
-          </Badge>
-        ))}
-      </div>
-    </div>
+    <>
+      {country?.borders.length ? (
+        <div className="space-y-2">
+          <Label>Borders</Label>
+          <div className="flex flex-wrap gap-2">
+            {country.borders.map((border) => (
+              <Badge
+                key={border}
+                variant={"outline"}
+                onClick={() => fetchCountry(border)}
+                className="cursor-pointer"
+              >
+                {border}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 };
 

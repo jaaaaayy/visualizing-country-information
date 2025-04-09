@@ -6,7 +6,7 @@ const Flag = ({ country }: { country: Country | null }) => {
       src={country?.flag}
       alt={country?.name}
       width={400}
-      className="mb-6 rounded-md"
+      className="mb-6 rounded-md border"
     />
   );
 };

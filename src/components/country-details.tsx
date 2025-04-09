@@ -5,10 +5,16 @@ import { Badge } from "./ui/badge";
 import { Label } from "./ui/label";
 import { Card, CardContent } from "./ui/card";
 
-const CountryDetails = ({ country }: { country: Country | null }) => {
+const CountryDetails = ({
+  country,
+  fetchCountry,
+}: {
+  country: Country | null;
+  fetchCountry(country: string): Promise<void>;
+}) => {
   return (
     <Card>
-      <CardContent className="grid lg:grid-cols-2 gap-6">
+      <CardContent className="grid md:grid-cols-2 gap-6">
         <div>
           <Flag country={country} />
           <div className="grid grid-cols-2 gap-6">
@@ -48,7 +54,7 @@ const CountryDetails = ({ country }: { country: Country | null }) => {
               {country?.coordinates?.longitude}
             </p>
           </div>
-          <Borders country={country} />
+          <Borders country={country} fetchCountry={fetchCountry} />
           <div className="grid grid-cols-2">
             <div className="space-y-2">
               <Label>Timezones</Label>
