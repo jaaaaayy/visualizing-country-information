@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="flex flex-col items-center justify-center border-t border-gray-200 p-4 lg:px-6">
+    <footer className="h-14 lg:h-16 flex flex-col items-center justify-center border-t border-gray-200 p-4 lg:px-6">
       <p>&copy; {new Date().getFullYear()} Visualizing Country Information</p>
       <p>
         Powered by{" "}
