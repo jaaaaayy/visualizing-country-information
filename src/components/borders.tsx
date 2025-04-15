@@ -18,7 +18,7 @@ const Borders = ({
             {country.borders.map((border) => (
               <Badge
                 key={border}
-                variant={"outline"}
+                variant={"default"}
                 onClick={() => fetchCountry(border)}
                 className="cursor-pointer"
               >

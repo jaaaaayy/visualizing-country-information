@@ -16,6 +16,6 @@ const RegionDropdownMenuItem = ({
       <label>{label}</label>
     </DropdownMenuItem>
   );
-}
+};
 
 export default RegionDropdownMenuItem;
