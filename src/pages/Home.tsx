@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Country } from "@/types";
 import { AlertCircle, Filter, Loader2, Search, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const regions = [
   "Asia",
@@ -35,7 +35,6 @@ const Home = () => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
-  const ignoreRef = useRef(false);
 
   const fetchCountry = async (country: string) => {
     try {
@@ -51,9 +50,7 @@ const Home = () => {
         return;
       }
 
-      if (!ignoreRef.current) {
-        setCountry(result.data);
-      }
+      setCountry(result.data);
     } catch (error) {
       console.log("Failed to fetch country!", error);
       setError("Failed to fetch country!");
@@ -76,12 +73,10 @@ const Home = () => {
         return;
       }
 
-      if (!ignoreRef.current) {
-        const filteredCountries = result.data.filter((country: Country) =>
-          selectedRegions.includes(country.region)
-        );
-        setCountries(filteredCountries);
-      }
+      const filteredCountries = result.data.filter((country: Country) =>
+        selectedRegions.includes(country.region)
+      );
+      setCountries(filteredCountries);
     } catch (error) {
       console.log("Failed to fetch countries!", error);
       setError("Failed to fetch countries!");
@@ -91,23 +86,11 @@ const Home = () => {
   };
 
   useEffect(() => {
-    ignoreRef.current = false;
-
     fetchCountry("Afghanistan");
-
-    return () => {
-      ignoreRef.current = true;
-    };
   }, []);
 
   useEffect(() => {
-    ignoreRef.current = false;
-
     selectedRegions && fetchCountries();
-
-    return () => {
-      ignoreRef.current = true;
-    };
   }, [selectedRegions]);
 
   const handleSearch = () => {
